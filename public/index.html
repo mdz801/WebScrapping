@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>El Peruano - Buscador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; padding: 20px; }
+        .result-card { margin-bottom: 15px; border-left: 5px solid #0d6efd; }
+    </style>
+</head>
+<body>
+    <div class="container bg-white p-4 rounded shadow-sm">
+        <h2 class="mb-4">Buscador de Normas Legales</h2>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Desde</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Hasta</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Palabras clave</label>
+                <input type="text" id="terms" class="form-control" placeholder="Ej: congreso desarrollo">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button onclick="buscar()" id="btnBuscar" class="btn btn-primary w-100">Buscar</button>
+            </div>
+        </div>
+
+        <hr>
+        <div id="loading" class="text-center d-none">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p>Realizando la búsqueda... por favor espera.</p>
+        </div>
+        <div id="resultados"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').value = hoy;
+            document.getElementById('endDate').value = hoy;
+        });
+
+
+
+        async function buscar() {
+            const btn = document.getElementById('btnBuscar');
+            const resDiv = document.getElementById('resultados');
+            const loader = document.getElementById('loading');
+            
+            const rawStart = document.getElementById('startDate').value;
+            const rawEnd = document.getElementById('endDate').value;
+            const terms = document.getElementById('terms').value;
+
+            // Convertir YYYY-MM-DD a DD/MM/YYYY
+            const format = (dateStr) => {
+                if(!dateStr) return "";
+                const [y, m, d] = dateStr.split('-');
+                return `${d}/${m}/${y}`;
+            }
+
+            const start = format(rawStart);
+            const end = format(rawEnd);
+
+            btn.disabled = true;
+            loader.classList.remove('d-none');
+            resDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`/api/getInfo?startDate=${start}&endDate=${end}&terms=${terms}`);
+                const json = await response.json();
+                
+                if (json.data.length === 0) {
+                    resDiv.innerHTML = '<div class="alert alert-warning">No se encontraron resultados.</div>';
+                } else {
+                    json.data.forEach(item => {
+                        resDiv.innerHTML += `
+                            <div class="card result-card shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="text-primary">${item.organization}</h6>
+                                    <h5 class="card-title">${item.title}</h5>
+                                    <p class="card-text small text-muted">${item.summary}</p>
+                                    <a href="${item.pdfLink}" target="_blank" class="btn btn-sm btn-outline-danger">Descargar PDF</a>
+                                </div>
+                            </div>`;
+                    });
+                }
+            } catch (e) {
+                resDiv.innerHTML = '<div class="alert alert-danger">Error conectando con el servidor.</div>';
+            } finally {
+                btn.disabled = false;
+                loader.classList.add('d-none');
+            }
+        }
+    </script>
+</body>
+</html>
