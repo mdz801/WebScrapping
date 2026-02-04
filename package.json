@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "bin": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "express": "^4.21.0",
     "node-hide-console-window": "^2.2.0",
