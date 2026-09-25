@@ -7,15 +7,26 @@ const getInfo = async (req, res) => {
     const terms = req.query.terms || "";
 
     try {
-        const linksArray = await info(startDate, endDate, terms); 
+        const result = await info(startDate, endDate, terms);
+        const data = Array.isArray(result) ? result : (result.data || []);
+        const reason = result.reason || (data.length === 0 ? 'no_results' : 'ok');
+        const message = result.message || null;
         res.json({
             success: true,
-            count: linksArray.length,
-            data: linksArray
+            count: data.length,
+            data,
+            reason,
+            message
         });
     } catch (error) {
         console.error("Error en el controlador:", error);
-        res.status(500).json({ success: false, message: error.message });
+        const msg = error && error.message ? error.message : String(error);
+        const isTimeout = /timeout/i.test(msg);
+        res.status(isTimeout ? 504 : 502).json({
+            success: false,
+            message: msg,
+            hint: 'En Render/free hosting el sitio del Peruano a veces bloquea la IP del servidor o el request supera el timeout del proxy.'
+        });
     }
 };
 
