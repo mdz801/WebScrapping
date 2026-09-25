@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: WebScrapping
+    env: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FETCH_TIMEOUT_MS
+        value: "20000"
