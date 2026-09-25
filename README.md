@@ -1,15 +1,17 @@
-# Web Scraping Application
+# Prueba de Web Scraping
 
-Web application built with **Node.js**, **Express** and **Playwright** for browser automation and web data extraction.
+> **Tipo de proyecto:** Prueba técnica / proyecto de aprendizaje
 
-## Tech Stack
+Aplicación desarrollada para practicar automatización del navegador y extracción de información web mediante **Node.js**, **Express** y **Playwright**.
+
+## Tecnologías
 
 - Node.js
 - Express
 - Playwright
 - JavaScript
 
-## Structure
+## Estructura
 
 ```text
 controllers/
@@ -19,32 +21,25 @@ public/
 app.js
 ```
 
-## Getting Started
-
-Install dependencies:
+## Ejecución
 
 ```bash
 npm install
-```
-
-Start the application:
-
-```bash
 npm start
 ```
 
-By default, the server runs on port `3000`.
+El servidor utiliza el puerto `3000` por defecto.
 
-## Health Check
+## Health check
 
 ```text
 GET /healthz
 ```
 
-## Architecture
+## Nota
 
-The application separates HTTP routes, controllers and scraping services so browser automation logic remains independent from the web layer.
+Este repositorio corresponde a una prueba técnica y no a una aplicación utilizada en producción.
 
 ---
 
-**Author:** Miguel Martínez
+**Autor:** Miguel Martínez
